@@ -1,7 +1,9 @@
 package com.example.reminderapp
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
@@ -9,33 +11,43 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.reminderapp.R
-import com.example.reminderapp.Reminder
-import com.example.reminderapp.ReminderAdapter
 
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.content_add_reminder.*
 import kotlinx.android.synthetic.main.content_main.*
+
+const val ADD_REMINDER_REQUEST_CODE = 100
 
 class MainActivity : AppCompatActivity() {
 
-  private val reminders = arrayListOf<Reminder>()
-  private val reminderAdapter =
-    ReminderAdapter(reminders)
+  private lateinit var reminders: ArrayList<Reminder>
+  private val reminderAdapter = ReminderAdapter(reminders)
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_main)
     setSupportActionBar(toolbar)
 
-    initViews()
 
+    reminders = arrayListOf(
+      Reminder("iets")
+    )
+
+    initViews()
     fab.setOnClickListener {
-      val reminder = etAddReminder.text.toString()
-      addReminder(reminder)
+
+      startAddActivity()
 
     }
   }
+
+  private fun startAddActivity() {
+    val intent = Intent(this, AddReminderActivity::class.java)
+    startActivityForResult(intent, ADD_REMINDER_REQUEST_CODE)
+  }
+
+
+
+
 
   private fun initViews() {
     // Initialize the recycler view with a linear layout manager, adapter
@@ -43,18 +55,44 @@ class MainActivity : AppCompatActivity() {
     rvReminders.adapter = reminderAdapter
     rvReminders.addItemDecoration(DividerItemDecoration(this@MainActivity, DividerItemDecoration.VERTICAL))
     createItemTouchHelper().attachToRecyclerView(rvReminders)
-
   }
 
-  private fun addReminder(reminder: String) {
-    if (reminder.isNotBlank()) {
-      reminders.add(Reminder(reminder))
-      reminderAdapter.notifyDataSetChanged()
-      etAddReminder.text?.clear()
-    } else {
-      Snackbar.make(etAddReminder, "You must fill in the input field!", Snackbar.LENGTH_SHORT).show()
+
+
+  override fun onCreateOptionsMenu(menu: Menu): Boolean {
+    // Inflate the menu; this adds items to the action bar if it is present.
+    menuInflater.inflate(R.menu.menu_main, menu)
+    return true
+  }
+
+  override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    // Handle action bar item clicks here. The action bar will
+    // automatically handle clicks on the Home/Up button, so long
+    // as you specify a parent activity in AndroidManifest.xml.
+    return when (item.itemId) {
+      R.id.action_settings -> true
+      else -> super.onOptionsItemSelected(item)
     }
   }
+
+  override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    if (resultCode == Activity.RESULT_OK) {
+      when (requestCode) {
+        ADD_REMINDER_REQUEST_CODE -> {
+          data?.let {
+            val reminder = it.getParcelableExtra<Reminder>(EXTRA_REMINDER)
+            reminders.add(reminder)
+            reminderAdapter.notifyDataSetChanged()
+          } ?: run {
+            Log.e("naam", "fout");
+          }
+
+        }
+      }
+    }
+  }
+
+
 
   /**
    * Create a touch helper to recognize when a user swipes an item from a recycler view.
@@ -86,20 +124,4 @@ class MainActivity : AppCompatActivity() {
     return ItemTouchHelper(callback)
   }
 
-
-  override fun onCreateOptionsMenu(menu: Menu): Boolean {
-    // Inflate the menu; this adds items to the action bar if it is present.
-    menuInflater.inflate(R.menu.menu_main, menu)
-    return true
-  }
-
-  override fun onOptionsItemSelected(item: MenuItem): Boolean {
-    // Handle action bar item clicks here. The action bar will
-    // automatically handle clicks on the Home/Up button, so long
-    // as you specify a parent activity in AndroidManifest.xml.
-    return when (item.itemId) {
-      R.id.action_settings -> true
-      else -> super.onOptionsItemSelected(item)
-    }
-  }
 }

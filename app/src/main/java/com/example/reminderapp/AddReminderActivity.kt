@@ -1,10 +1,15 @@
 package com.example.reminderapp
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 
 import kotlinx.android.synthetic.main.activity_add_reminder.*
+import kotlinx.android.synthetic.main.content_add_reminder.*
+
+const val EXTRA_REMINDER = "EXTRA_REMINDER"
 
 class AddReminderActivity : AppCompatActivity() {
 
@@ -13,10 +18,23 @@ class AddReminderActivity : AppCompatActivity() {
     setContentView(R.layout.activity_add_reminder)
     setSupportActionBar(toolbar)
 
-    fab.setOnClickListener { view ->
-      Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-        .setAction("Action", null).show()
-    }
+    initViews()
   }
 
+  private fun initViews() {
+    fab.setOnClickListener { onSaveClick() }
+  }
+
+  private fun onSaveClick() {
+    if (etAddReminder.text.toString().isNotBlank()) {
+      val reminder = Reminder(etAddReminder.text.toString())
+      val resultIntent = Intent()
+      resultIntent.putExtra(EXTRA_REMINDER, reminder)
+      setResult(Activity.RESULT_OK, resultIntent)
+      finish()
+    } else {
+      Toast.makeText(this,"The reminder cannot be empty"
+        , Toast.LENGTH_SHORT).show()
+    }
+  }
 }
