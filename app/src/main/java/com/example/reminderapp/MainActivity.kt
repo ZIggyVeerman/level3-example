@@ -20,7 +20,8 @@ const val ADD_REMINDER_REQUEST_CODE = 100
 class MainActivity : AppCompatActivity() {
 
   private lateinit var reminders: ArrayList<Reminder>
-  private val reminderAdapter = ReminderAdapter(reminders)
+  private lateinit var reminderAdapter: ReminderAdapter
+
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -31,6 +32,8 @@ class MainActivity : AppCompatActivity() {
     reminders = arrayListOf(
       Reminder("iets")
     )
+
+    reminderAdapter = ReminderAdapter(reminders)
 
     initViews()
     fab.setOnClickListener {
@@ -76,13 +79,19 @@ class MainActivity : AppCompatActivity() {
   }
 
   override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    super.onActivityResult(requestCode, resultCode, data)
+
     if (resultCode == Activity.RESULT_OK) {
       when (requestCode) {
         ADD_REMINDER_REQUEST_CODE -> {
-          data?.let {
-            val reminder = it.getParcelableExtra<Reminder>(EXTRA_REMINDER)
-            reminders.add(reminder)
-            reminderAdapter.notifyDataSetChanged()
+          data?.let {saveData ->
+            val reminder = saveData.getParcelableExtra<Reminder>(EXTRA_REMINDER)
+            reminder?.let {saveReminder ->
+              reminders.add(saveReminder)
+              reminderAdapter.notifyDataSetChanged()
+            } ?: run {
+              Log.e("naam", "fout")
+            }
           } ?: run {
             Log.e("naam", "fout");
           }
