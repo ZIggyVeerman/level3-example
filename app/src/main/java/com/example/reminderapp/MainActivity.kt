@@ -14,6 +14,7 @@ import com.example.reminderapp.Reminder
 import com.example.reminderapp.ReminderAdapter
 
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.content_add_reminder.*
 import kotlinx.android.synthetic.main.content_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -30,7 +31,7 @@ class MainActivity : AppCompatActivity() {
     initViews()
 
     fab.setOnClickListener {
-      val reminder = etReminder.text.toString()
+      val reminder = etAddReminder.text.toString()
       addReminder(reminder)
 
     }
@@ -49,9 +50,9 @@ class MainActivity : AppCompatActivity() {
     if (reminder.isNotBlank()) {
       reminders.add(Reminder(reminder))
       reminderAdapter.notifyDataSetChanged()
-      etReminder.text?.clear()
+      etAddReminder.text?.clear()
     } else {
-      Snackbar.make(etReminder, "You must fill in the input field!", Snackbar.LENGTH_SHORT).show()
+      Snackbar.make(etAddReminder, "You must fill in the input field!", Snackbar.LENGTH_SHORT).show()
     }
   }
 
