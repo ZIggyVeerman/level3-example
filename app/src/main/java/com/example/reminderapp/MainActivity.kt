@@ -90,10 +90,10 @@ class MainActivity : AppCompatActivity() {
               reminders.add(saveReminder)
               reminderAdapter.notifyDataSetChanged()
             } ?: run {
-              Log.e("naam", "fout")
+              Log.e("saveReminder", "Something went wrong with adding a Reminder")
             }
           } ?: run {
-            Log.e("naam", "fout");
+            Log.e("saveData", "Something went wrong with saving the data from saveReminder");
           }
 
         }
