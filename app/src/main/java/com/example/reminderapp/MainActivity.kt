@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
 
 
     reminders = arrayListOf(
-      Reminder("iets")
+      Reminder("Hoi")
     )
 
     reminderAdapter = ReminderAdapter(reminders)
@@ -49,17 +49,18 @@ class MainActivity : AppCompatActivity() {
   }
 
 
-
-
-
   private fun initViews() {
     // Initialize the recycler view with a linear layout manager, adapter
     rvReminders.layoutManager = LinearLayoutManager(this@MainActivity, RecyclerView.VERTICAL, false)
     rvReminders.adapter = reminderAdapter
-    rvReminders.addItemDecoration(DividerItemDecoration(this@MainActivity, DividerItemDecoration.VERTICAL))
+    rvReminders.addItemDecoration(
+      DividerItemDecoration(
+        this@MainActivity,
+        DividerItemDecoration.VERTICAL
+      )
+    )
     createItemTouchHelper().attachToRecyclerView(rvReminders)
   }
-
 
 
   override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -84,9 +85,9 @@ class MainActivity : AppCompatActivity() {
     if (resultCode == Activity.RESULT_OK) {
       when (requestCode) {
         ADD_REMINDER_REQUEST_CODE -> {
-          data?.let {saveData ->
+          data?.let { saveData ->
             val reminder = saveData.getParcelableExtra<Reminder>(EXTRA_REMINDER)
-            reminder?.let {saveReminder ->
+            reminder?.let { saveReminder ->
               reminders.add(saveReminder)
               reminderAdapter.notifyDataSetChanged()
             } ?: run {
@@ -100,7 +101,6 @@ class MainActivity : AppCompatActivity() {
       }
     }
   }
-
 
 
   /**
